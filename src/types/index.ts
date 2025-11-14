@@ -6,12 +6,14 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  phone?: string;
   isBlocked?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface ParcelLog {
+  _id?: string;
   status: string;
   note?: string;
   updatedBy?: User | string;
