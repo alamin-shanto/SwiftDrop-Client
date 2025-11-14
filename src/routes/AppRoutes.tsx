@@ -16,6 +16,14 @@ import TrackingPage from "../pages/tracking/TrackingPage";
 export default function AppRoutes() {
   return (
     <Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        pauseOnHover
+        theme="light"
+      />
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/features" element={<Features />} />
