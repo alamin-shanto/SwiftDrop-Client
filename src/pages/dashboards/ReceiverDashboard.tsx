@@ -41,8 +41,7 @@ const StatusPieChart: StatusPieChartType =
 
 const ReceiverDashboard: React.FC = () => {
   const user = useAppSelector((s) => s.auth.user);
-  // keep receiverId available if you need later; not used now so avoid eslint complaints by not declaring it
-  // const receiverId = user?._id as string | undefined;
+  // keeping receiverId available if need later; not used now so avoid eslint complaints by not declaring it
 
   // call with no args because your endpoint was declared with void (matches your RTK Query setup)
   const { data: stats, isLoading: statsLoading } = useParcelsStatsQuery();
