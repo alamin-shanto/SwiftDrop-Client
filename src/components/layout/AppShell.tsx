@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -10,8 +10,6 @@ type Props = {
 };
 
 const AppShell: React.FC<Props> = ({ children, hideChrome = false }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const renderContent = () => {
     if (children !== undefined && children !== null) return <>{children}</>;
     return <Outlet />;
@@ -30,23 +28,13 @@ const AppShell: React.FC<Props> = ({ children, hideChrome = false }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 flex flex-col">
-      <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
+      <Navbar />
 
       <div className="flex flex-1">
         {/* Desktop sidebar */}
         <div className="hidden md:block">
           <Sidebar open />
         </div>
-
-        {/* Mobile sidebar */}
-        {sidebarOpen && (
-          <div className="md:hidden fixed inset-0 z-40 flex">
-            <div className="w-64 bg-white dark:bg-slate-900 p-4">
-              <Sidebar open onClose={() => setSidebarOpen(false)} />
-            </div>
-            <div className="flex-1" onClick={() => setSidebarOpen(false)} />
-          </div>
-        )}
 
         {/* Page content */}
         <main className="flex-1 p-4">{renderContent()}</main>

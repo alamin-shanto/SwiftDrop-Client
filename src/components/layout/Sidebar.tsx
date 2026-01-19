@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
+import { navigation } from "../../config/navigation";
 
 type Props = {
   open?: boolean;
@@ -16,38 +17,11 @@ const Sidebar: React.FC<Props> = ({ open = true, onClose }) => {
     "block py-2 px-3 rounded bg-sky-100 dark:bg-sky-900 text-sky-800 dark:text-white";
   const baseLinkClass =
     "block py-2 px-3 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200";
-
-  /** -------------------------------
-   *  PUBLIC (LOGGED OUT) MENU
-   *--------------------------------*/
-  const publicItems: Array<{ to: string; label: string }> = [
-    { to: "/", label: "Home" },
-    { to: "/about", label: "About" },
-    { to: "/features", label: "Features" },
-  ];
-
-  /** -------------------------------
-   *  LOGGED-IN / ROLE-BASED MENU
-   *--------------------------------*/
-  const authedItems: Array<{ to: string; label: string }> = [];
-
-  if (role === "sender") {
-    authedItems.push({ to: "/dashboard/sender", label: "Sender Dashboard" });
-  } else if (role === "receiver") {
-    authedItems.push({
-      to: "/dashboard/receiver",
-      label: "Receiver Dashboard",
-    });
-  } else if (role === "admin") {
-    authedItems.push({ to: "/dashboard/admin", label: "Admin Dashboard" });
-  }
-
-  // Universal for all logged-in users
-  if (isAuth) {
-    authedItems.push({ to: "/dashboard/tracking", label: "Track Parcels" });
-  }
-
-  const itemsToRender = isAuth ? authedItems : publicItems;
+  const sidebarLinks = navigation.filter((item) => {
+    if (item.auth && !isAuth) return false;
+    if (item.role && item.role !== role) return false;
+    return true;
+  });
 
   return (
     <aside
@@ -79,18 +53,25 @@ const Sidebar: React.FC<Props> = ({ open = true, onClose }) => {
 
       {/* Navigation */}
       <nav className="space-y-2">
-        {itemsToRender.map((it) => (
-          <NavLink
-            key={it.to}
-            to={it.to}
-            onClick={onClose}
-            className={({ isActive }) =>
-              isActive ? activeClass : baseLinkClass
-            }
-          >
-            {it.label}
-          </NavLink>
-        ))}
+        {sidebarLinks.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              onClick={onClose}
+              className={({ isActive }) =>
+                isActive ? activeClass : baseLinkClass
+              }
+            >
+              <div className="flex items-center gap-2">
+                {Icon && <Icon className="w-5 h-5" />}
+                <span>{item.name}</span>
+              </div>
+            </NavLink>
+          );
+        })}
       </nav>
 
       <div className="mt-6 text-xs text-gray-500 dark:text-slate-500">

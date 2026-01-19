@@ -1,19 +1,32 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import Button from "../common/Button";
 import { FaBars, FaUserCircle, FaTimes } from "react-icons/fa";
 import { setAuth } from "../../features/auth/authSlice";
+import { navigation } from "../../config/navigation";
 
-type Props = {
-  onOpenSidebar?: () => void;
-};
+type Props = Record<string, never>;
 
-const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
+const Navbar: React.FC<Props> = () => {
   const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const role = user?.role;
+  const isAuth = Boolean(user);
+
+  const mobileSidebarLinks = navigation.filter((item) => {
+    if (item.auth && !isAuth) return false;
+    if (item.role && item.role !== role) return false;
+    return true;
+  });
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   const activeClass = "text-sky-600 font-semibold";
   const baseLinkClass = "text-sm text-slate-700 dark:text-slate-200";
@@ -38,19 +51,8 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
   return (
     <nav className="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Left: logo + sidebar toggle */}
+        {/* Left: logo */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => {
-              if (onOpenSidebar) onOpenSidebar();
-              else setMobileOpen((v) => !v);
-            }}
-            className="md:hidden p-2 text-lg"
-            aria-label="Open menu"
-          >
-            <FaBars />
-          </button>
-
           <NavLink to="/" className="flex items-center gap-2">
             <img
               src="/Images/SwiftDrop Logo.png"
@@ -83,7 +85,7 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
             Features
           </NavLink>
 
-          {user ? (
+          {user ?
             <>
               <NavLink
                 to="/profile"
@@ -96,8 +98,7 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
                 Logout
               </Button>
             </>
-          ) : (
-            <>
+          : <>
               <NavLink to="/auth/login">
                 <Button variant="ghost" size="md">
                   Login
@@ -109,7 +110,7 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
                 </Button>
               </NavLink>
             </>
-          )}
+          }
         </div>
 
         {/* Mobile menu button (right) */}
@@ -119,7 +120,9 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
             className="p-2"
             aria-label="Open mobile menu"
           >
-            {mobileOpen ? <FaTimes /> : <FaBars />}
+            {mobileOpen ?
+              <FaTimes />
+            : <FaBars />}
           </button>
         </div>
       </div>
@@ -127,7 +130,8 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
       {/* Mobile dropdown menu */}
       {mobileOpen && (
         <div className="md:hidden bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-          <div className="p-3 space-y-2">
+          <div className="p-3 space-y-3">
+            {/* === Navbar links (same as desktop navbar) === */}
             <NavLink
               to="/about"
               onClick={() => setMobileOpen(false)}
@@ -144,7 +148,7 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
               Features
             </NavLink>
 
-            {user ? (
+            {user ?
               <div className="flex items-center justify-between pt-2">
                 <NavLink
                   to="/profile"
@@ -154,6 +158,7 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
                   <FaUserCircle />
                   <span>{user.name}</span>
                 </NavLink>
+
                 <Button
                   variant="outline"
                   size="sm"
@@ -165,13 +170,13 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
                   Logout
                 </Button>
               </div>
-            ) : (
-              <div className="flex items-center gap-2 pt-2">
+            : <div className="flex items-center gap-2 pt-2">
                 <NavLink to="/auth/login" onClick={() => setMobileOpen(false)}>
                   <Button variant="ghost" size="md">
                     Login
                   </Button>
                 </NavLink>
+
                 <NavLink
                   to="/auth/register"
                   onClick={() => setMobileOpen(false)}
@@ -181,7 +186,24 @@ const Navbar: React.FC<Props> = ({ onOpenSidebar }) => {
                   </Button>
                 </NavLink>
               </div>
-            )}
+            }
+
+            {/* === Sidebar links (same as desktop sidebar) === */}
+            {mobileSidebarLinks.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 hover:text-sky-600"
+                >
+                  {Icon && <Icon className="w-5 h-5" />}
+                  <span>{item.name}</span>
+                </NavLink>
+              );
+            })}
           </div>
         </div>
       )}
