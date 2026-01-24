@@ -5,6 +5,7 @@ import Button from "../../components/common/Button";
 import { useParcelsStatsQuery } from "../../api/parcelsApi";
 import { useEffect, useState } from "react";
 import HeroSection from "../../components/home/heroSection";
+import HowItWorksSection from "../../components/home/HowItWorksSection";
 
 const Home: React.FC = () => {
   const { data: stats, isLoading } = useParcelsStatsQuery();
@@ -37,6 +38,9 @@ const Home: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* HOW IT WORKS */}
+        <HowItWorksSection />
 
         {/* FEATURES */}
         <section className="mb-12">
