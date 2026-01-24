@@ -1,83 +1,42 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { AppShell } from "../../components/layout/AppShell";
-import TrackingSearchWidget from "../../components/parcels/TrackingSearchWidget";
-import ShipmentsBarChart from "../../components/charts/ShipmentsBarChart";
-import StatusPieChart from "../../components/charts/StatusPieChart";
 import Button from "../../components/common/Button";
 import { useParcelsStatsQuery } from "../../api/parcelsApi";
+import { useEffect, useState } from "react";
+import HeroSection from "../../components/home/heroSection";
 
 const Home: React.FC = () => {
   const { data: stats, isLoading } = useParcelsStatsQuery();
+
+  const [showScroll, setShowScroll] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowScroll(window.scrollY < 80);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <AppShell>
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* HERO */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-              SwiftDrop — parcel delivery that actually moves fast.
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
-              Send, track and manage parcels across the country with real-time
-              updates, transparent pricing and human-friendly support. Built for
-              modern senders, trusted by local businesses.
-            </p>
+        <HeroSection stats={stats} isLoading={isLoading} />
 
-            <div className="flex flex-wrap gap-3">
-              <Link to="/auth/register">
-                <Button variant="primary">Create account</Button>
-              </Link>
-              <Link to="/features">
-                <Button variant="outline">See features</Button>
-              </Link>
-            </div>
+        {/* Scroll indicator (fixed to viewport) */}
+        {showScroll && (
+          <div className="hidden lg:flex fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex-col items-center gap-2 text-gray-400 pointer-events-none">
+            <span className="text-[10px] tracking-widest uppercase opacity-70">
+              Scroll
+            </span>
 
-            <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-semibold">
-                  {stats?.total ?? "—"}
-                </div>
-                <div className="text-xs text-gray-500">Shipments</div>
-              </div>
-              <div>
-                <div className="text-2xl font-semibold">
-                  {stats?.delivered ?? "—"}
-                </div>
-                <div className="text-xs text-gray-500">Delivered</div>
-              </div>
-              <div>
-                <div className="text-2xl font-semibold">
-                  {stats?.inTransit ?? "—"}
-                </div>
-                <div className="text-xs text-gray-500">In transit</div>
-              </div>
+            <div className="w-6 h-10 rounded-full border border-gray-500 flex justify-center">
+              <span className="w-1.5 h-2.5 bg-gray-400 rounded-full mt-1 animate-scrollDot" />
             </div>
           </div>
-
-          {/* Right column: tracking + quick stats */}
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow tour-create-parcel">
-              <h3 className="font-semibold mb-3">Track a parcel</h3>
-              <TrackingSearchWidget />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow">
-                <h4 className="font-medium mb-2">Monthly shipments</h4>
-                <ShipmentsBarChart
-                  data={stats?.monthly ?? []}
-                  loading={isLoading}
-                />
-              </div>
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow">
-                <h4 className="font-medium mb-2">Status breakdown</h4>
-                <StatusPieChart stats={stats} loading={isLoading} />
-              </div>
-            </div>
-          </div>
-        </section>
+        )}
 
         {/* FEATURES */}
         <section className="mb-12">
