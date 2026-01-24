@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 /* ================= TYPES ================= */
 
@@ -57,26 +50,26 @@ const StatusPieChart: React.FC<Props> = ({
   const cancelled = stats?.cancelled ?? 0;
 
   const pending =
-    typeof stats?.pending === "number"
-      ? stats.pending
-      : Math.max(0, total - (delivered + inTransit + cancelled));
+    typeof stats?.pending === "number" ?
+      stats.pending
+    : Math.max(0, total - (delivered + inTransit + cancelled));
 
   const colors = mode === "receiver" ? RECEIVER_COLORS : SENDER_COLORS;
 
   const data =
-    mode === "receiver"
-      ? [
-          { name: "Received", value: delivered, color: colors.delivered },
-          { name: "On the way", value: inTransit, color: colors.inTransit },
-          { name: "Waiting", value: pending, color: colors.pending },
-          { name: "Cancelled", value: cancelled, color: colors.cancelled },
-        ]
-      : [
-          { name: "Delivered", value: delivered, color: colors.delivered },
-          { name: "In transit", value: inTransit, color: colors.inTransit },
-          { name: "Pending", value: pending, color: colors.pending },
-          { name: "Cancelled", value: cancelled, color: colors.cancelled },
-        ];
+    mode === "receiver" ?
+      [
+        { name: "Received", value: delivered, color: colors.delivered },
+        { name: "On the way", value: inTransit, color: colors.inTransit },
+        { name: "Waiting", value: pending, color: colors.pending },
+        { name: "Cancelled", value: cancelled, color: colors.cancelled },
+      ]
+    : [
+        { name: "Delivered", value: delivered, color: colors.delivered },
+        { name: "In transit", value: inTransit, color: colors.inTransit },
+        { name: "Pending", value: pending, color: colors.pending },
+        { name: "Cancelled", value: cancelled, color: colors.cancelled },
+      ];
 
   const hasData = data.some((d) => d.value > 0);
 
@@ -114,6 +107,7 @@ const StatusPieChart: React.FC<Props> = ({
       className="rounded-2xl border border-slate-100 bg-white p-4 flex flex-col gap-3"
       style={{ height }}
     >
+      {/* Header */}
       <div className="flex justify-between items-center">
         <span className="text-sm font-medium text-slate-700">
           {resolvedTitle}
@@ -121,6 +115,7 @@ const StatusPieChart: React.FC<Props> = ({
         <span className="text-xs text-slate-400">Total: {total}</span>
       </div>
 
+      {/* Chart area */}
       <div className="flex-1 min-h-40">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -136,9 +131,23 @@ const StatusPieChart: React.FC<Props> = ({
               ))}
             </Pie>
             <Tooltip />
-            <Legend verticalAlign="bottom" height={32} />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* Legend (HTML, controlled layout) */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600">
+        {data.map((item) => (
+          <div key={item.name} className="flex items-center gap-2">
+            <span
+              className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+              style={{ backgroundColor: item.color }}
+            />
+            <span className="truncate">
+              {item.name}: {item.value}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );

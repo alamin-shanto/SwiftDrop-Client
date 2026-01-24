@@ -144,7 +144,7 @@ const Home: React.FC = () => {
         </section>
 
         {/* CTA */}
-        <section className="bg-gradient-to-r from-sky-600 to-indigo-600 rounded-lg text-white p-8">
+        <section className="bg-linear-to-r from-sky-600 to-indigo-600 rounded-lg text-white p-8">
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
             <div className="md:col-span-2">
               <h3 className="text-xl font-bold">Ready to ship smarter?</h3>
