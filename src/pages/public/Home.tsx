@@ -6,6 +6,7 @@ import { useParcelsStatsQuery } from "../../api/parcelsApi";
 import { useEffect, useState } from "react";
 import HeroSection from "../../components/home/heroSection";
 import HowItWorksSection from "../../components/home/HowItWorksSection";
+import ServiceCoverageSection from "../../components/home/ServiceCoverageSection";
 
 const Home: React.FC = () => {
   const { data: stats, isLoading } = useParcelsStatsQuery();
@@ -70,6 +71,9 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* SERVICE COVERAGE */}
+        <ServiceCoverageSection />
 
         {/* TESTIMONIALS */}
         <section className="mb-12">
